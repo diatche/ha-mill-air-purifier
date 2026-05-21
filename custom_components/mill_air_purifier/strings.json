@@ -35,8 +35,20 @@
       "air_quality_index": {
         "name": "Air quality index"
       },
+      "average_room_temperature": {
+        "name": "Average room temperature"
+      },
+      "away_temperature": {
+        "name": "Away temperature"
+      },
+      "comfort_temperature": {
+        "name": "Comfort temperature"
+      },
       "current_power": {
         "name": "Current power"
+      },
+      "current_room_mode": {
+        "name": "Current room mode"
       },
       "day_consumption": {
         "name": "Day consumption"
@@ -46,6 +58,9 @@
       },
       "fan_level_auto": {
         "name": "Fan level auto"
+      },
+      "heat_status": {
+        "name": "Heat status"
       },
       "humidity_level": {
         "name": "Humidity"
@@ -58,6 +73,9 @@
       },
       "pm25": {
         "name": "PM2.5"
+      },
+      "sleep_temperature": {
+        "name": "Sleep temperature"
       },
       "temperature_level": {
         "name": "Temperature"

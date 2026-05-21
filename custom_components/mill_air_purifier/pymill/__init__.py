@@ -766,6 +766,16 @@ class Mill:
             device_id, {"additional_socket_mode": mode}
         )
 
+
+def first_present(data: dict[str, Any], *keys: str) -> Any:
+    """Return the first non-null value found for a list of API key variants."""
+    for key in keys:
+        value = data.get(key)
+        if value is not None:
+            return value
+    return None
+
+
 @dataclass
 class MillDevice:
     """Mill Device."""
@@ -838,10 +848,15 @@ class Heater(MillDevice):
     last_fetched: dt.datetime = field(default_factory=lambda: dt.datetime.fromtimestamp(0, tz=dt.timezone.utc))
     open_window: str | None = None
     power_status: bool | None = None
+    away_temp: float | None = None
+    comfort_temp: float | None = None
+    current_room_mode: str | None = None
+    heat_status: str | None = None
     room_avg_temp: float | None = None
     room_id: str | None = None
     room_name: str | None = None
     set_temp: float | None = None
+    sleep_temp: float | None = None
     tibber_control: bool | None = None
     total_consumption: float | None = None
     year_consumption: float | None = None
@@ -906,7 +921,24 @@ class Heater(MillDevice):
         self.home_id = self.room_data.get("houseId")
         self.room_id = self.room_data.get("id")
         self.room_name = self.room_data.get("name")
-        self.room_avg_temp = self.room_data.get("averageTemperature")
+        self.away_temp = first_present(
+            self.room_data, "awayTemp", "roomAwayTemperature", "awayTemperature"
+        )
+        self.comfort_temp = first_present(
+            self.room_data, "comfortTemp", "roomComfortTemperature", "comfortTemperature"
+        )
+        self.current_room_mode = first_present(
+            self.room_data, "currentRoomMode", "roomMode", "mode"
+        )
+        self.heat_status = first_present(
+            self.room_data, "heatStatus", "heatingStatus", "roomHeatStatus"
+        )
+        self.room_avg_temp = first_present(
+            self.room_data, "averageTemperature", "avgTemp", "roomAverageTemperature"
+        )
+        self.sleep_temp = first_present(
+            self.room_data, "sleepTemp", "roomSleepTemperature", "sleepTemperature"
+        )
         self.independent_device = False
 
     @property
