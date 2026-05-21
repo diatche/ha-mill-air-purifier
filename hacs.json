@@ -1,0 +1,6 @@
+{
+  "name": "Mill Air Purifier",
+  "render_readme": true,
+  "domains": ["mill_air_purifier"],
+  "homeassistant": "2025.1.0"
+}
