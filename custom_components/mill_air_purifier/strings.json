@@ -56,6 +56,9 @@
       "estimated_co2": {
         "name": "Estimated CO2"
       },
+      "estimated_co2_level": {
+        "name": "Estimated CO2 level"
+      },
       "fan_level_auto": {
         "name": "Fan level auto"
       },
@@ -68,11 +71,20 @@
       "pm1": {
         "name": "PM1"
       },
+      "pm1_level": {
+        "name": "PM1 level"
+      },
       "pm10": {
         "name": "PM10"
       },
+      "pm10_level": {
+        "name": "PM10 level"
+      },
       "pm25": {
         "name": "PM2.5"
+      },
+      "pm25_level": {
+        "name": "PM2.5 level"
       },
       "sleep_temperature": {
         "name": "Sleep temperature"
@@ -82,6 +94,9 @@
       },
       "tvoc": {
         "name": "TVOC"
+      },
+      "tvoc_level": {
+        "name": "TVOC level"
       },
       "uncalibrated_temperature": {
         "name": "Uncalibrated temperature"
