@@ -66,7 +66,7 @@
         "name": "Heat status"
       },
       "humidity_level": {
-        "name": "Humidity"
+        "name": "Humidity level"
       },
       "pm1": {
         "name": "PM1"
@@ -90,7 +90,7 @@
         "name": "Sleep temperature"
       },
       "temperature_level": {
-        "name": "Temperature"
+        "name": "Temperature level"
       },
       "tvoc": {
         "name": "TVOC"

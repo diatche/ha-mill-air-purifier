@@ -626,7 +626,11 @@ class Mill:
     async def fetch_heater_and_sensor_data(self) -> dict[str, MillDevice]:
         """Fetch all devices including heaters, sockets, and sensors."""
         await self.update_devices()
-        return self.devices
+        return {
+            key: val
+            for key, val in self.devices.items()
+            if isinstance(val, AirPurifier)
+        }
 
     async def heater_control(self, device_id: str, power_status: bool) -> None:
         """Control heater power status."""

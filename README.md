@@ -22,4 +22,4 @@ If the custom integration is not useful, remove it from HACS and restart Home As
 ## Known limits
 
 - This is for cloud setup first. Local generation-3 heater support is copied from Home Assistant's built-in integration but is not the reason for this fork.
-- The custom integration may duplicate entities for existing supported Mill heaters/sensors while it is being tested.
+- The cloud setup intentionally exposes only Mill air purifier devices. Keep the built-in Mill integration for heaters and Mill Sense.
