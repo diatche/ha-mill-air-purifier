@@ -225,6 +225,7 @@ AIR_PURIFIER_SENSOR_TYPES: tuple[SensorEntityDescription, ...] = (
         translation_key="air_quality_index",
         device_class=SensorDeviceClass.AQI,
         state_class=SensorStateClass.MEASUREMENT,
+        entity_category=EntityCategory.DIAGNOSTIC,
     ),
     SensorEntityDescription(
         key="temperature_level",
