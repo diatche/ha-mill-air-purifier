@@ -165,6 +165,7 @@ class Mill:
     ) -> None:
         """Initialize the Mill connection."""
         self.devices: dict = {}
+        self.rooms: dict[str, dict[str, Any]] = {}
         self.websession = websession or aiohttp.ClientSession()
 
         self._ua = user_agent
@@ -303,6 +304,7 @@ class Mill:
         payload: dict[str, Any] | None = None,
         retry: int = 3,
         patch: bool = False,
+        delete: bool = False,
     ) -> dict[str, Any] | None:
         """Execute API request with automatic token refresh and retry logic."""
         if not self._token_manager.access_token:
@@ -320,7 +322,9 @@ class Mill:
         url = f"{API_ENDPOINT}{command}"
 
         try:
-            return await self._execute_request(url, payload, patch, retry, command)
+            return await self._execute_request(
+                url, payload, patch, delete, retry, command
+            )
         except asyncio.TimeoutError:
             if retry < 1:
                 _LOGGER.error("Timed out sending command to Mill: %s", url)
@@ -328,7 +332,9 @@ class Mill:
 
             backoff_time = max(0.5, 2 ** (3 - retry) - 0.5)
             await asyncio.sleep(backoff_time)
-            return await self.request(command, payload, retry - 1, patch=patch)
+            return await self.request(
+                command, payload, retry - 1, patch=patch, delete=delete
+            )
         except aiohttp.ClientError:
             _LOGGER.exception("Error sending command to Mill: %s", url)
             return None
@@ -338,6 +344,7 @@ class Mill:
         url: str,
         payload: dict[str, Any] | None,
         patch: bool,
+        delete: bool,
         retry: int,
         command: str,
     ) -> dict[str, Any] | None:
@@ -345,7 +352,9 @@ class Mill:
         async with asyncio.timeout(self._timeout):
             headers = self._build_headers(include_auth=True)
 
-            if not payload:
+            if delete:
+                resp = await self.websession.delete(url, json=payload, headers=headers)
+            elif not payload:
                 resp = await self.websession.get(url, headers=headers)
             elif patch:
                 resp = await self.websession.patch(url, json=payload, headers=headers)
@@ -355,7 +364,13 @@ class Mill:
             if resp.status == HTTP_UNAUTHORIZED:
                 _LOGGER.debug("Invalid auth token, attempting refresh")
                 if await self.refresh_token():
-                    return await self.request(command, payload, retry - 1, patch=patch)
+                    return await self.request(
+                        command,
+                        payload,
+                        retry - 1,
+                        patch=patch,
+                        delete=delete,
+                    )
 
                 _LOGGER.error("Invalid auth token, refresh failed")
                 return None
@@ -368,7 +383,7 @@ class Mill:
 
             result = await resp.text()
             _LOGGER.debug("Result %s", result)
-            return json.loads(result)
+            return json.loads(result) if result else {}
 
     async def cached_request(
         self,
@@ -399,7 +414,13 @@ class Mill:
         if not resp:
             return
 
-        homes = resp.get("ownHouses", [])
+        homes = [
+            home
+            for group_name, group in resp.items()
+            if group_name.endswith("Houses") and isinstance(group, list)
+            for home in group
+            if isinstance(home, dict)
+        ]
         for home in homes:
             home_id = home.get("id")
             if not home_id:
@@ -423,7 +444,10 @@ class Mill:
                     room_id = room.get("roomId")
                     if not room_id:
                         continue
+                    self.rooms[room_id] = room
                     room_data = await self.cached_request(f"rooms/{room_id}/devices", ttl=90)
+                    if isinstance(room_data, dict):
+                        self.rooms[room_id].update(room_data)
                     tasks.extend(self._update_device(device, room_data) for device in room.get("devices", []))
 
             if tasks:
@@ -617,6 +641,38 @@ class Mill:
 
         self._cache.clear()
         await self.request(f"rooms/{room_id}/temperature", payload)
+
+    async def set_room_mode_override(self, room_id: str, mode: str) -> bool:
+        """Set a continuous room mode override, or resume the weekly program."""
+        supported_modes = {"weekly_program", "comfort", "sleep", "away", "off"}
+        if mode not in supported_modes:
+            raise ValueError(f"Unsupported room mode: {mode}")
+
+        endpoint = f"rooms/{room_id}/mode/override"
+        if mode == "weekly_program":
+            result = await self.request(
+                endpoint, {"disableOverride": True}, delete=True
+            )
+        else:
+            result = await self.request(
+                endpoint,
+                {
+                    "overrideModeType": "continuous",
+                    "overrideEndDate": 9_999_999_999,
+                    "mode": mode,
+                },
+            )
+
+        if result is None:
+            return False
+
+        self._cache.clear()
+        if room_id in self.rooms:
+            self.rooms[room_id]["mode"] = mode
+        for device in self.devices.values():
+            if isinstance(device, Heater) and device.room_id == room_id:
+                device.current_room_mode = mode
+        return True
 
     async def fetch_heater_data(self) -> dict[str, Heater | Socket]:
         """Fetch all heater and socket devices."""

@@ -1,6 +1,6 @@
 {
   "domain": "mill_air_purifier",
-  "name": "Mill Air Purifier",
+  "name": "Mill Custom",
   "after_dependencies": ["recorder"],
   "codeowners": ["@diatche"],
   "config_flow": true,
@@ -8,5 +8,5 @@
   "iot_class": "local_polling",
   "loggers": ["custom_components.mill_air_purifier", "mill_local"],
   "requirements": ["mill-local==0.5.0"],
-  "version": "0.1.4"
+  "version": "0.2.0"
 }

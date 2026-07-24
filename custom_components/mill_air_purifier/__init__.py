@@ -17,7 +17,7 @@ from .coordinator import (
 )
 from .pymill import Mill
 
-PLATFORMS = [Platform.CLIMATE, Platform.NUMBER, Platform.SENSOR]
+PLATFORMS = [Platform.CLIMATE, Platform.NUMBER, Platform.SELECT, Platform.SENSOR]
 
 __all__ = ["CLOUD", "CONNECTION_TYPE", "DOMAIN", "LOCAL"]
 

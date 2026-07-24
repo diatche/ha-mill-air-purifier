@@ -1,25 +1,29 @@
-# Mill Air Purifier for Home Assistant
+# Mill Custom for Home Assistant
 
-Experimental custom integration for testing Mill air purifier support without replacing Home Assistant's built-in `mill` integration.
+A custom Mill integration for Home Assistant, covering cloud features that are not available in the built-in `mill` integration.
 
-This integration uses a separate domain, `mill_air_purifier`, so the built-in Mill integration can remain installed during the trial. It vendors a patched copy of `millheater` with support for the Mill cloud device type `Air Purifiers`.
+The integration retains the `mill_air_purifier` domain for compatibility. It began with Mill air-purifier support and now also provides selected whole-home Mill controls, including room mode overrides.
+
+## Features
+
+- Mill air purifier sensors
+- Existing Mill heater, socket, and local generation-3 support inherited from the upstream integration
+- Room profile temperature service (`mill_air_purifier.set_room_temperature`)
+- Room mode override control with Weekly program, Comfort, Sleep, Away, and Off options
+
+The custom integration can remain installed alongside Home Assistant's built-in Mill integration while its broader device coverage is developed incrementally.
 
 ## Install with HACS
 
 1. In HACS, open **Integrations**.
 2. Open the three-dot menu and choose **Custom repositories**.
 3. Add this repository URL as category **Integration**.
-4. Install **Mill Air Purifier**.
+4. Install **Mill Custom**.
 5. Restart Home Assistant.
-6. Add the integration from **Settings > Devices & services > Add integration > Mill Air Purifier**.
+6. Add the integration from **Settings > Devices & services > Add integration > Mill Custom**.
 
-## Test plan
+## Notes
 
-Keep the existing built-in Mill integration in place. Add this custom integration separately with the same Mill cloud credentials, then confirm the air purifier appears and exposes sensible sensor values.
-
-If the custom integration is not useful, remove it from HACS and restart Home Assistant. The built-in `mill` integration is not modified by this repository.
-
-## Known limits
-
-- This is for cloud setup first. Local generation-3 heater support is copied from Home Assistant's built-in integration but is not the reason for this fork.
-- The cloud setup intentionally exposes only Mill air purifier devices. Keep the built-in Mill integration for heaters and Mill Sense.
+- Cloud setup is the primary supported path.
+- Local generation-3 heater support is retained from Home Assistant's built-in integration.
+- The existing domain is intentionally unchanged to avoid a disruptive migration.
