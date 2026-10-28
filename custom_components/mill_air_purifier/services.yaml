@@ -8,18 +8,21 @@ set_room_temperature:
     away_temp:
       selector:
         number:
-          min: 0
-          max: 100
-          unit_of_measurement: "°"
+          min: 5
+          max: 35
+          step: 0.5
+          unit_of_measurement: "°C"
     comfort_temp:
       selector:
         number:
-          min: 0
-          max: 100
-          unit_of_measurement: "°"
+          min: 5
+          max: 35
+          step: 0.5
+          unit_of_measurement: "°C"
     sleep_temp:
       selector:
         number:
-          min: 0
-          max: 100
-          unit_of_measurement: "°"
+          min: 5
+          max: 35
+          step: 0.5
+          unit_of_measurement: "°C"

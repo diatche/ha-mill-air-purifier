@@ -18,6 +18,11 @@ for name, path in (
     sys.modules.setdefault(name, package)
 
 from custom_components.mill_air_purifier.pymill import Heater, Mill
+from custom_components.mill_air_purifier.validation import validate_room_temperature
+
+
+def test_room_temperature_service_preserves_half_degrees() -> None:
+    assert validate_room_temperature(23.5) == 23.5
 
 
 @pytest.mark.asyncio

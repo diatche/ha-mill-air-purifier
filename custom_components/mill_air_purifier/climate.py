@@ -35,13 +35,14 @@ from .const import (
 from .coordinator import MillConfigEntry, MillDataUpdateCoordinator
 from .entity import MillBaseEntity
 from . import pymill
+from .validation import validate_room_temperature
 
 SET_ROOM_TEMP_SCHEMA = vol.Schema(
     {
         vol.Required(ATTR_ROOM_NAME): cv.string,
-        vol.Optional(ATTR_AWAY_TEMP): cv.positive_int,
-        vol.Optional(ATTR_COMFORT_TEMP): cv.positive_int,
-        vol.Optional(ATTR_SLEEP_TEMP): cv.positive_int,
+        vol.Optional(ATTR_AWAY_TEMP): validate_room_temperature,
+        vol.Optional(ATTR_COMFORT_TEMP): validate_room_temperature,
+        vol.Optional(ATTR_SLEEP_TEMP): validate_room_temperature,
     }
 )
 
